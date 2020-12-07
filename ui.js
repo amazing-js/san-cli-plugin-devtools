@@ -7,6 +7,28 @@ const execa = require('execa');
 const portfinder = require('portfinder');
 
 const SAND_DEFAULT_PORT = 8899;
+const portMap = new Map();
+
+function setPortCache(projectId, portData) {
+    portMap.set(projectId, portData);
+}
+
+function deletePortCache(projectId) {
+    portMap.delete(projectId);
+    if (portMap.size === 0) {
+        delete process.env.SAND_BACKEND_URL;
+    }
+}
+
+function getPortCache(projectId) {
+    let res = portMap.get(projectId);
+    if (res && res.port) {
+        // 如果已经存在了，复用
+        return res;
+    }
+    return null;
+}
+
 module.exports = api => {
     if (process.env.SAN_CLI_UI_DEV) {
         api.registerAddon({
@@ -23,18 +45,23 @@ module.exports = api => {
 
     api.registerView({
         id: 'san.san-devtools.views',
-        name: 'san.san-devtools.views',
+        name: '调试器',
         // Santd的图标
         icon: 'tool'
     });
 
-    const task = {};
-
     api.onAction('san.cli.actions.sand.start', async params => {
+        let res = getPortCache(api.project.id);
+        if (res) {
+            // 复用
+            return res;
+        }
+
         const port = await portfinder.getPortPromise({
             port: SAND_DEFAULT_PORT
         });
 
+        const task = {};
         const data = await new Promise((resolve, reject) => {
             const sand = path.resolve(__dirname, './node_modules/san-devtools/bin/san-devtools');
             const child = execa.node(sand, ['-o', 'false', '-p', port], {
@@ -67,17 +94,23 @@ module.exports = api => {
             });
         });
 
-        return {
+        res = {
             port,
             ...data
-        };
+        }
+
+        // 存储数据
+        setPortCache(api.project.id, Object.assign({}, res, {task}));
+
+        return res;
     });
 
     api.onAction('san.cli.actions.sand.stop', async params => {
-        if (task.child) {
-            task.child.kill();
-            delete task.child;
-            delete process.env.SAND_BACKEND_URL;
+        let projectId = api.project.id;
+        let cachedPort = getPortCache(projectId) || {};
+        if (cachedPort.task && cachedPort.task.child) {
+            cachedPort.task.child.kill();
+            deletePortCache(projectId);
             return {
                 errno: 0,
                 errmsg: 'Stopped sand Successfully.'
@@ -87,5 +120,9 @@ module.exports = api => {
             errno: 1,
             errmsg: 'Sand service not found.'
         };
+    });
+
+    api.onAction('san.cli.actions.sand.deletePortCache', async params => {
+        deletePortCache(api.project.id);
     });
 };
