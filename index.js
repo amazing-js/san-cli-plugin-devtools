@@ -3,7 +3,7 @@ const SanDevToolsPlugin = require('./lib/SanDevToolsPlugin');
 
 // For Test
 // process.env.SAND_URL_INJECT_ENABLED = true;
-process.env.SAND_BACKEND_URL = 'http://localhost:8888/test-inject.js';
+// process.env.SAND_BACKEND_URL = 'http://localhost:8888/test-inject.js';
 
 module.exports = {
     id: 'san-cli:plugin-san-devtools',
