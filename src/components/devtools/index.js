@@ -21,7 +21,6 @@ export default {
 
     initData() {
         return {
-            // TODO: some todo
             showHome: false,
             config: null
         };
@@ -44,11 +43,16 @@ export default {
     },
 
     attached() {
-        this.startSandTools();
+        this.startSandTools(null, true);
     },
 
-    async startSandTools() {
-        const {results, errors} = await this.$callPluginAction('san.cli.actions.sand.start');
+    async startSandTools(e, attached) {
+        const {results, errors} = await this.$callPluginAction('san.cli.actions.sand.start', attached);
+        const existed = results[0] && results[0]._sanCliPluginDevtoolsExisted;
+        if (attached && !existed || !results[0]) {
+            // 如果是首次进来，则先不链接;或者首次挂载，并且没有复用数据可用
+            return;
+        }
         const home = results[0] && results[0].home;
         const url = `${home}getHomeConfigOnly`;
         window.fetch(url).then(res => {

@@ -50,11 +50,15 @@ module.exports = api => {
         icon: 'tool'
     });
 
-    api.onAction('san.cli.actions.sand.start', async params => {
+    api.onAction('san.cli.actions.sand.start', async attached => {
         let res = getPortCache(api.project.id);
         if (res) {
-            // 复用
-            return res;
+            // 组件挂载, 并且复用
+            return {...res, _sanCliPluginDevtoolsExisted: true};
+        }
+        if (attached) {
+            // 如果是挂载阶段，并且无复用，则直接返回
+            return null;
         }
 
         const port = await portfinder.getPortPromise({
