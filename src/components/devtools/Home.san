@@ -42,7 +42,7 @@
                     <a slot="edit" on-click="openSanDevtools(item)"><s-icon type="bug" style="margin-right: 8px;" />San DevTools</a>
                     <a slot="more" on-click="openChii(item)"><s-icon type="chrome" style="margin-right: 8px;" />Chrome DevTools</a>
                     <s-list-item-meta description="{{item.url}}">
-                        <s-avatar size="large" slot="avatar" src="{{item.favicon || logo}}"></s-avatar>
+                        <s-avatar shape="circle" size="large" slot="avatar" src="{{item.favicon || logo}}" ></s-avatar>
                         <a href="javascript:void(0);" slot="title">{{item.title}}</a>
                     </s-list-item-meta>
                 </s-list-item>

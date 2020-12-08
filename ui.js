@@ -61,7 +61,7 @@ module.exports = api => {
             port: SAND_DEFAULT_PORT
         });
 
-        const task = {};
+        const _sanCliPluginDevtoolsTask = {};
         const data = await new Promise((resolve, reject) => {
             const sand = path.resolve(__dirname, './node_modules/san-devtools/bin/san-devtools');
             const child = execa.node(sand, ['-o', 'false', '-p', port], {
@@ -70,7 +70,7 @@ module.exports = api => {
                 shell: true
             });
 
-            task.child = child;
+            _sanCliPluginDevtoolsTask.child = child;
 
             console.log(`San Devtools is running at port [${port}]`);
 
@@ -100,7 +100,7 @@ module.exports = api => {
         }
 
         // 存储数据
-        setPortCache(api.project.id, Object.assign({}, res, {task}));
+        setPortCache(api.project.id, Object.assign({}, res, {_sanCliPluginDevtoolsTask}));
 
         return res;
     });
@@ -108,8 +108,8 @@ module.exports = api => {
     api.onAction('san.cli.actions.sand.stop', async params => {
         let projectId = api.project.id;
         let cachedPort = getPortCache(projectId) || {};
-        if (cachedPort.task && cachedPort.task.child) {
-            cachedPort.task.child.kill();
+        if (cachedPort._sanCliPluginDevtoolsTask && cachedPort._sanCliPluginDevtoolsTask.child) {
+            cachedPort._sanCliPluginDevtoolsTask.child.kill();
             deletePortCache(projectId);
             return {
                 errno: 0,

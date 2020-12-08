@@ -50,7 +50,6 @@ export default {
     async startSandTools() {
         const {results, errors} = await this.$callPluginAction('san.cli.actions.sand.start');
         const home = results[0] && results[0].home;
-        const port = results[0] && results[0].port;
         const url = `${home}getHomeConfigOnly`;
         window.fetch(url).then(res => {
             return res.json();
@@ -58,14 +57,11 @@ export default {
             this.data.set('showHome', true);
             this.data.set('config', config);
         }).catch(err => {
-            // this.startSandTools(port);
-            console.log(err);
+            this.data.set('showHome', false);
         });
-        console.log({results, errors});
     },
 
     async stopSandTools() {
         const {results, errors} = await this.$callPluginAction('san.cli.actions.sand.stop', {});
-        console.log({results, errors});
     }
 };
