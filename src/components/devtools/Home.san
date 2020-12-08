@@ -8,20 +8,20 @@
             <s-tag s-if="status ==='connecting'" color="orange" slot="tags">Connecting</s-tag>
         </div>
         <div class="wrap">
-            <s-row>
-                <s-col span="{{12}}">
+            <s-grid-row>
+                <s-grid-col span="{{12}}">
                     <div class="description">
                         <div class="term">WebSocket Host：</div>
                         <div class="detail">{{config.wsHost}}</div>
                     </div>
-                </s-col>
-                <s-col span="{{12}}">
+                </s-grid-col>
+                <s-grid-col span="{{12}}">
                     <div class="description">
                         <div class="term">Port：</div>
                         <div class="detail">{{config.wsPort}}</div>
                     </div>
-                </s-col>
-                <s-col span="{{24}}">
+                </s-grid-col>
+                <s-grid-col span="{{24}}">
                     <div class="description">
                         <div class="term"><s-badge count="{{1}}" style="{{{'background-color': 'rgba(25, 104, 250, .6)'}}}"/>  添加 Backend.js 到调试页面顶部（San.js之前）：</div>
                         <div class="detail"><a target="_blank" href="{{backendjs}}">{{config.backendjs}}</a></div>
@@ -29,8 +29,8 @@
                     <div class="description">
                         <div class="term"><s-badge count="{{2}}" style="{{{'background-color': 'rgba(25, 104, 250, .6)'}}}"/>  访问该页面，选择调试页面，点击链接开始调试</div>
                     </div>
-                </s-col>
-            </s-row>
+                </s-grid-col>
+            </s-grid-row>
             <div s-if="config.backends.length===0" class="emptyInfo">没有检测到待调试的页面</div>
             <s-list
                 slot="footer"
@@ -53,24 +53,10 @@
 </template>
 <script>
 import './home.less';
-import {Component} from 'san';
-import {Grid, Button, Tag, List, Avatar, Icon, Badge} from 'santd';
 import logo from '../../assets/icons/logo.svg?inline';
 import pkg from 'san-devtools/package.json';
 
-    export default class Home extends Component{
-        static components = {
-            's-badge': Badge,
-            's-icon': Icon,
-            's-list': List,
-            's-list-item': List.Item,
-            's-list-item-meta': List.Item.Meta,
-            's-avatar': Avatar,
-            's-tag': Tag,
-            's-button': Button,
-            's-row': Grid.Row,
-            's-col': Grid.Col
-        };
+    export default class Home extends SanComponent{
         openSanDevtools(item) {
             let config  = this.data.get('config');
             // eslint-disable-next-line max-len

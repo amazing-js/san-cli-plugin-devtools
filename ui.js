@@ -101,7 +101,7 @@ module.exports = api => {
         res = {
             port,
             ...data
-        }
+        };
 
         // 存储数据
         setPortCache(api.project.id, Object.assign({}, res, {_sanCliPluginDevtoolsTask}));
