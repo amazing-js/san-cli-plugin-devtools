@@ -67,8 +67,7 @@ module.exports = api => {
 
         const _sanCliPluginDevtoolsTask = {};
         const data = await new Promise((resolve, reject) => {
-            const sand = path.resolve(__dirname, './node_modules/san-devtools/bin/san-devtools');
-            const child = execa.node(sand, ['-o', 'false', '-p', port], {
+            const child = execa('npx', ['sand', '-o', 'false', '-p', port], {
                 preferLocal: true,
                 stdio: ['inherit', 'pipe', 'pipe', 'ipc'],
                 shell: true
