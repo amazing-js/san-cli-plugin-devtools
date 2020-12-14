@@ -91,7 +91,9 @@ import pkg from 'san-devtools/package.json';
                         clearTimeout(timerId);
                     }
                     else {
+                        console.log('backendAppend12345', data);
                         _self.data.unshift('config.backends', data);
+                        _self.dispatch('backendAppend', data);
                     }
                 }
             };

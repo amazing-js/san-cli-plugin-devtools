@@ -1,0 +1,92 @@
+.san-devtools-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &-mask {
+        &:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.65);
+        }
+    }
+    #san-devtools-app {
+        width: 100%;
+        height: 100%;
+        ::-webkit-scrollbar{
+            width: 0px;
+            height: 0px;
+        }
+        ::-webkit-scrollbar-thumb{
+            background: #50555a;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-track{
+            background: transparent;
+            border-radius: 2px;
+        }
+        .navigation {
+            width: 100%;
+        }
+        .content {
+            position: relative !important;
+            top: 0;
+            width: 100%;
+            min-height: 600px;
+            height: calc(100% - 60px);
+            .container {
+                max-width: none !important;
+            }
+        }
+    }
+    .sand-tool-bar {
+        position: fixed;
+        top: 160px;
+        left: 200px;
+        z-index: 1002;
+        border-radius: 50%;
+        &-list {
+            display: inline-block;
+        }
+        .btnBreath {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            animation: breathe 1500ms ease-in-out infinite alternate;
+        }
+    }
+    .sand-home-wrapper {
+        padding: 10px;
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        overflow: auto;
+        z-index: 1001;
+        background-color: #f1f5f9;
+        .hide-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: rgba(0,0,0,0.3);
+            border: 0;
+        }
+    }
+}
+
+@keyframes breathe {
+    0% {
+        opacity: .4;
+        box-shadow: 0 1px 2px rgba(0, 147, 223, 0.4), 0 1px 1px rgba(0, 147, 223, 0.1) inset;
+    }
+
+    100% {
+        opacity: 1;
+        border: 1px solid rgba(59, 235, 235, 0.7);
+        box-shadow: 0 1px 30px #0093df, 0 1px 20px #0093df inset;
+    }
+}
