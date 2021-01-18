@@ -11,6 +11,10 @@ import 'san-devtools/dist/frontend.css';
 import {DevTools, WebSocket, createBridge, createFrontendSocketUrl, initFrontend} from 'san-devtools/dist/index.js';
 
 const RECONNECT_COUNT = 5;
+const CONNECTING = 'connecting';
+const CONNECTING_COLOR = '#3898b9';
+const CONNECTED = 'connected';
+const CONNECTED_COLOR = '#52c41a';
 export default {
     template: /* html */`
         <div class="san-devtools-wrapper {{homeVisibility && bridge ? 'san-devtools-wrapper-mask' : ''}}">
@@ -67,6 +71,7 @@ export default {
     `,
     
     initData() {
+        this.countNum = 0;
         return {
             showHome: false,
             config: null,
@@ -74,7 +79,8 @@ export default {
             bridge: null,
             backendId: '',
             homeVisibility: true,
-            showToolBar: false
+            showToolBar: false,
+            resourceQuery: ''
         };
     },
 
@@ -130,6 +136,12 @@ export default {
 
     socket(resourceQuery) {
         this.countNum++;
+        resourceQuery = resourceQuery || this.data.get('resourceQuery');
+        console.log(
+            `%c san-devtools %c ${CONNECTING}`,
+            'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
+            `background: ${CONNECTING_COLOR}; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff`
+        );
         if (this.countNum > RECONNECT_COUNT || !resourceQuery) {
             this.countNum = 0;
             return;
@@ -145,13 +157,18 @@ export default {
                 this.bridge = _bridge;
                 // 确认建立链接之后，开始初始化 frontend
                 this.initialize(this.bridge);
+                console.log(
+                    `%c san-devtools %c ${CONNECTED}`,
+                    'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
+                    `background: ${CONNECTED_COLOR}; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff`
+                );
             });
         });
         wss.on('close', () => {
             // frontend 关闭的时候，触发 SYSTEM:backendDisconnected 清理 store
             _bridge.emit('SYSTEM:backendDisconnected');
             // 开始重连
-            setTimeout(this.socket, 1000);
+            setTimeout(this.socket.bind(this), 1000);
         });
     },
 
@@ -169,6 +186,7 @@ export default {
         let resourceQuery = `?ws&wsHost=${url.hostname}&wsPort=${url.port}&backendId=${backendId}`;
 
         if (resourceQuery !== '' && resourceQuery.includes('ws')) {
+            this.data.set('resourceQuery', resourceQuery);
             this.socket(resourceQuery);
         }
     },

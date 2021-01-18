@@ -91,7 +91,6 @@ import pkg from 'san-devtools/package.json';
                         clearTimeout(timerId);
                     }
                     else {
-                        console.log('backendAppend12345', data);
                         _self.data.unshift('config.backends', data);
                         _self.dispatch('backendAppend', data);
                     }
@@ -108,7 +107,6 @@ import pkg from 'san-devtools/package.json';
                 ws.onmessage = (e) => {
                     let data = e.data;
                     data = JSON.parse(data);
-                    console.log('onmessage', data);
                     const handler = handlers[data.event];
                     if (typeof handler === 'function') {
                         handler(data.payload);
