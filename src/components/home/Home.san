@@ -60,13 +60,15 @@ import pkg from 'san-devtools/package.json';
         openSanDevtools(item) {
             let config  = this.data.get('config');
             // eslint-disable-next-line max-len
-            window.open(`${config.frontendUrl}&backendId=${item.id}`, 'San Devtools');
+            // window.open(`${config.frontendUrl}&backendId=${item.id}`, 'San Devtools');
+            this.fire('change', true);
         }
         openChii(item){
             let config  = this.data.get('config');
             let protocol = config.frontendUrl && config.frontendUrl.split('\/\/')[0];
             const chiipath = `${protocol}//${config.wsHost}:${config.wsPort}/chii/chii_app.html`;
             const url = `${chiipath}?${protocol==='https:'?'wss':'ws'}=${config.wsHost}:${config.wsPort}/frontend/chii?backendId=${item.id}`;
+            this.fire('change', false);
             window.open(url, 'Chrome Devtools');
         }
         attached() {

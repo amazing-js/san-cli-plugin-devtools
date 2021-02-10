@@ -10,12 +10,12 @@
         &:after {
             content: '';
             position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            top: -20px;
+            bottom: -20px;
+            left: -20px;
+            right: -20px;
             z-index: 100;
-            background-color: rgba(0, 0, 0, 0.65);
+            background-color: rgba(0, 0, 0, 0.25);
         }
     }
     #san-devtools-app {
@@ -49,8 +49,8 @@
     }
     .sand-tool-bar {
         position: fixed;
-        top: 160px;
-        left: 200px;
+        top: 20px;
+        left: 40px;
         z-index: 1002;
         border-radius: 50%;
         &-list {
@@ -59,6 +59,16 @@
         .btnBreath {
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
             animation: breathe 1500ms ease-in-out infinite alternate;
+        }
+        .santd-btn {
+            height: 36px;
+            font-size: 18px;
+            font-weight: 500;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            border-radius: 18px;
+            background-repeat: no-repeat;
+            background-position: 13px center;
         }
     }
     .sand-home-wrapper {
@@ -69,12 +79,17 @@
         overflow: auto;
         z-index: 1001;
         background-color: #f1f5f9;
+        border-radius: 15px;
         .hide-btn {
             position: absolute;
             right: 10px;
             top: 10px;
             background: rgba(0,0,0,0.3);
             border: 0;
+        }
+        .nostart {
+            margin-top: 60px;
+            text-align: center;
         }
     }
 }

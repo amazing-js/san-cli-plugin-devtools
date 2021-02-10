@@ -17,56 +17,37 @@ const CONNECTED = 'connected';
 const CONNECTED_COLOR = '#52c41a';
 export default {
     template: /* html */`
-        <div class="san-devtools-wrapper {{homeVisibility && bridge ? 'san-devtools-wrapper-mask' : ''}}">
+        <div class="san-devtools-wrapper {{homeVisibility && showHome && bridge && isSanTools ? 'san-devtools-wrapper-mask' : ''}}">
             <div class="sand-tool-bar">
                 <s-button
                     class="btnBreath"
                     size="large"
                     type="primary"
-                    shape="circle"
                     icon="menu-fold"
                     on-click="toolBarClk"
-                />
+                >菜单</s-button>
                 <div s-if="{{showToolBar}}" class="sand-tool-bar-list">
                     <s-button
-                        type="primary" 
-                        on-click="startSandTools"
-                        disabled={{showHome}}
-                        shape="circle"
-                        icon="play-circle"
-                    />
-                    <s-button
-                        type="danger"
-                        on-click="stopSandTools"
-                        disabled={{!showHome}}
-                        shape="circle"
-                        icon="pause"
-                    />
+                        type="{{!showHome ? 'primary' : 'danger'}}" 
+                        on-click="changeSandTools"
+                        icon="{{!showHome ? 'caret-right' : 'pause'}}"
+                    >{{!showHome ? '运行' : '停止'}}</s-button>
                     <s-button
                         type="primary"
                         on-click="showHomeClk"
-                        shape="circle"
                         disabled={{!showHome}}
                         icon="bug"
-                    />
+                    >切换面板</s-button>
                 </div>
             </div>
-            <div class="sand-home-wrapper" style="visibility: {{homeVisibility && showHome ? 'visible' : 'hidden'}};">
-                <s-button
-                    s-if="{{showHome}}"
-                    class="hide-btn"
-                    type="primary"
-                    shape="circle"
-                    icon="close"
-                    on-click="showHomeClk('hide')"
-                />
-                <sand-home 
-                    s-if="{{showHome}}"
+            <div class="sand-home-wrapper" s-if="showHome && homeVisibility">
+                <sand-home
                     config="{{config}}"
+                    on-change="changeTools"
                 />
             </div>
-            <div s-if="{{!showHome || !bridge}}">还没启动 san-devtools ...</div>
-            <s-devtools s-if="{{bridge && showHome}}" bridge="{{bridge}}"></s-devtools>
+            <div s-elif="!showHome" class="nostart">请点击开始按钮启动</div>
+            <s-devtools s-if="{{bridge && isSanTools}}" bridge="{{bridge}}"></s-devtools>
         </div>
     `,
     
@@ -74,12 +55,12 @@ export default {
         this.countNum = 0;
         return {
             showHome: false,
+            isSanTools: false,
             config: null,
             serverInfo: null,
             bridge: null,
             backendId: '',
-            homeVisibility: true,
-            showToolBar: false,
+            showToolBar: true,
             resourceQuery: ''
         };
     },
@@ -111,18 +92,16 @@ export default {
             this.wsConnect(backendId);
         }
     },
-
+    changeTools(isSan) {
+        isSan && this.showHomeClk()
+        this.data.set('isSanTools', !!isSan);
+    },
     toolBarClk() {
         this.data.set('showToolBar', !this.data.get('showToolBar'));
     },
 
-    showHomeClk(arg) {
-        if (arg === 'hide') {
-            this.data.set('homeVisibility', false);
-        }
-        else {
-            this.data.set('homeVisibility', !this.data.get('homeVisibility'));
-        }
+    showHomeClk() {
+        this.data.set('homeVisibility', !this.data.get('homeVisibility'));
     },
 
     initialize(bridge) {
@@ -204,7 +183,7 @@ export default {
                 toolBar.style.transform = `translate3d(${this.toolBarLeft}px, ${this.toolBarTop}px, 0)`
             }
         );
-        this.startSandTools(null, true);
+        this.changeSandTools(null, true);
     },
 
     getFirstBackendIdFromConfig(config) {
@@ -212,7 +191,14 @@ export default {
         return backends[0].id;
     },
 
-    async startSandTools(e, attached) {
+    async changeSandTools(e, attached) {
+        if (this.data.get('showHome')) {
+            const {results, errors} = await this.$callPluginAction('san.cli.actions.sand.stop', {});
+            this.data.set('showHome', false);
+            this.data.set('isSanTools', false);
+            return;
+        }
+        this.data.set('homeVisibility', true);
         const {results, errors} = await this.$callPluginAction('san.cli.actions.sand.start', attached);
         const existed = results[0] && results[0]._sanCliPluginDevtoolsExisted;
         if (attached && !existed || !results[0]) {
@@ -236,7 +222,4 @@ export default {
         });
     },
 
-    async stopSandTools() {
-        const {results, errors} = await this.$callPluginAction('san.cli.actions.sand.stop', {});
-    }
 };
