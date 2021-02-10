@@ -49,6 +49,7 @@
         "cross-env": "^7.0.2",
         "postcss-import": "^11.0.0",
         "postcss-loader": "^2.0.8",
+        "postcss-selector-namespace": "^3.0.1",
         "postcss-url": "^7.2.1",
         "prettier": "^2.0.5",
         "san-cli": "^3.0.0"

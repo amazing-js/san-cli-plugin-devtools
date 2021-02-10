@@ -10,6 +10,11 @@ module.exports = {
         id: 'san.webpack.client-view.devtools',
         port: 8952
     }),
+    css: {
+        sourceMap: false,
+        cssPreprocessor: 'less',
+        extract: false
+    },
     chainWebpack: config => {
         config.module
             .rule('less')
